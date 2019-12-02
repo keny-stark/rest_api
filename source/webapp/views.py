@@ -55,14 +55,19 @@ def multiply_view(request, *args, **kwargs):
 
 @csrf_exempt
 def divide_view(request, *args, **kwargs):
-    if request.method == 'POST':
-        if request.body:
-            try:
-                number_for_result = json.loads(request.body)
-                result = (int(number_for_result['A']) // int(number_for_result['B']))
-                answer = {'content': result}
-                return JsonResponse(answer)
-            except ValueError:
-                    response = JsonResponse({'error': 'No data provided!'})
-                    response.status_code = 400
-                    return response
+    try:
+        if request.method == 'POST':
+            if request.body:
+                try:
+                    number_for_result = json.loads(request.body)
+                    result = (int(number_for_result['A']) // int(number_for_result['B']))
+                    answer = {'content': result}
+                    return JsonResponse(answer)
+                except ZeroDivisionError:
+                        response = JsonResponse({'error': 'No data provided!'})
+                        response.status_code = 400
+                        return response
+    except ValueError:
+        response = JsonResponse({'error': 'No data provided!'})
+        response.status_code = 400
+        return response
