@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>aaa</h1>
+    <form method="POST">
+        <label for="a"></label><input id="a" type="text">
+        <label for="b"></label><input id="b" type="text">
+        <button class="click" type="button" data-cmd="add" >add</button>
+        <button class="click" type="button" data-cmd="subtract">subtract</button>
+        <button class="click" type="button" data-cmd="multiply">multiply</button>
+        <button class="click" type="button" data-cmd="divide">divide</button>
+
+    </form>
+ <p id="answer"></p>
+
+    {% block scripts %}
+        <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+        <script>
+
+
+$(".click").click(function() {
+
+   let a = $("#a").val();
+   let b = $("#b").val();
+
+   const data = {
+     "A": a,
+     "B": b
+   };
+
+function result(response){
+    let p = $('#answer');
+
+    if (response.content){
+        p.css('border', '1px solid green');
+        p.text(response.content)
+    }else {
+        p.css('border', '1px solid red');
+        p.text(0)
+    }
+
+
+    console.log(response)
+}
+
+function error(error) {
+    let p = $('#answer');
+    if (error.status){
+        p.css('border', '1px solid red');
+        p.text(error.statusText)
+    }
+
+    console.log(error.statusText, 'error')
+
+
+}
+var cmd = $(this).attr("data-cmd");
+
+   $.ajax({
+        url: `http://localhost:8000/${cmd}/`,
+        method: 'POST',
+        data: JSON.stringify(data),
+        dataType: "json",
+        success: result,
+        error: error
+    })
+ })
+
+</script>
+    {% endblock %}
+
+{% endblock %}
